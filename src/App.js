@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import './App.css';
 
 class App extends React.Component {
@@ -16,25 +16,52 @@ class App extends React.Component {
 
     render() {
         return (
-            <div>
-                <h1>Homepage</h1>
-
-                {this.state.posts.map((p) => {
-                    return (
-                        <div>
-                            <h2>{p.boast_or_roast === 'B' ? 'Boast' : 'Roast'}</h2>
-                            <ul>
-                                <li>{p.content}</li>
-                                <li>upvotes: {p.upvotes} | downvotes: {p.downvotes}</li>
-                                <li>date created: {p.upload_date}</li>
-                                <li>upvote & downvote buttons here</li>
-                            </ul>
-                        </div>
-                    )
-                })}
-            </div>
+            <section>
+                <header>
+                    <h1>Homepage</h1>
+                </header>
+                <PostList
+                    posts={this.state.posts}
+                />
+            </section>
         );
     }
+}
+
+class Post extends Component {
+  render() {
+    return (
+        <section>
+            <h2>{this.props.boastorroast === 'B' ? 'Boast' : 'Roast'}</h2>
+            <ul>
+                <li>{this.props.content}</li>
+                <li>upvotes: {this.props.upvotes} | downvotes: {this.props.downvotes}</li>
+                <li>date created: {this.props.date}</li>
+                <li>upvote & downvote buttons here</li>
+            </ul>
+        </section>
+    );
+  }
+}
+
+class PostList extends Component {
+  render() {
+    return (
+      <section>
+        <ul>
+          {this.props.posts.map(post => (
+            <Post
+                boastorroast = {post.boast_or_roast}
+                content = {post.content}
+                upvotes = {post.upvotes}
+                downvotes = {post.downvotes}
+                date = {post.upload_date}
+            />
+          ))}
+        </ul>
+      </section>
+    );
+  }
 }
 
 export default App;
