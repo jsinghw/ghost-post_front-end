@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { Route, NavLink } from "react-router-dom"
 import './App.css';
 
 class App extends Component {
@@ -46,20 +47,61 @@ class App extends Component {
       //overwrite the old state with new state
       this.setState({ posts: newPostList })
     }
+    handleGetVoteScore = event => {
+        fetch('http://127.0.0.1:8000/api/post/highest_vote_scores/?format=json')
+        .then(res => res.json())
+        .then(data => this.setState({posts: data}))
+    }
+    handleGetPosts = event => {
+        fetch('http://127.0.0.1:8000/api/post/?format=json')
+        .then(res => res.json())
+        .then(data => this.setState({posts: data}))
+    }
 
     render() {
         return (
             <section>
                 <header>
                     <h1>Homepage</h1>
+                    <NavLink to="/">All</NavLink>
+                    <NavLink to="/boasts">Boasts</NavLink>
+                    <NavLink to="/roasts">Roasts</NavLink>
+                    <NavLink to="/vote_score">Vote Score</NavLink>
                 </header>
-                <PostList
-                    posts={this.state.posts}
-                    handleUpvote={this.handleUpvote}
-                    handleDownvote={this.handleDownvote}
-                />
+
+                <Route exact path='/'>
+                    <PostList
+                        posts={this.state.posts}
+                        handleUpvote={this.handleUpvote}
+                        handleDownvote={this.handleDownvote}
+                        />
+                </Route>
+
+                <Route exact path='/boasts'>
+                    <PostList
+                        posts={this.state.posts.filter(post => post.boast_or_roast === 'B')}
+                        handleUpvote={this.handleUpvote}
+                        handleDownvote={this.handleDownvote}
+                        />
+                </Route>
+
+                <Route exact path='/roasts'>
+                    <PostList
+                        posts={this.state.posts.filter(post => post.boast_or_roast === 'R')}
+                        handleUpvote={this.handleUpvote}
+                        handleDownvote={this.handleDownvote}
+                        />
+                </Route>
+
+                <Route exact path='/vote_score'>
+                    <PostList
+                        posts={this.state.posts.concat().sort((a,b) =>(a.vote_score < b.vote_score) ? 1 : -1)}
+                        handleUpvote={this.handleUpvote}
+                        handleDownvote={this.handleDownvote}
+                        />
+                </Route>
             </section>
-        );
+        )
     }
 }
 
